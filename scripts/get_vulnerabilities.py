@@ -9,6 +9,8 @@ print(image_names)
 for i in image_names:
     if '\n' in i:
         i = i[:-1]
+    if ':' in i:
+        i = i.split(':')[0]
     i2 = re.sub('/','-',i)
     f_name1 = 'trivy_results/json/CVE-'+i2+'.json'
     f_name2 = 'trivy_results/table/CVE-'+i2+'.txt'

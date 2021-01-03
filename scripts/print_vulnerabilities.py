@@ -1,13 +1,22 @@
 import os
 import json
+import re
 files_list = []
 path_to_files = "./libraries_needed/"
 path_to_vulnerabilities = "./trivy_results/json/"
-prefix = "CVE-codewisdom-ts-"
+prefix = "CVE-"
 for i,j,k in os.walk(path_to_files):
     files_list.extend(k)
 final_res = {}
 upgrades = {}
+f = open("cont_image_map.txt","r")
+x = f.readlines()
+f.close()
+ci_map = {}
+for i in x[2:]:
+    cont = i.split()[0]
+    img = re.sub('/','-',i.split()[1])
+    ci_map[cont]=img
 for name in files_list:
     # print("\nImage Name : ",name[:-4])
     # print("***********************")
@@ -21,7 +30,7 @@ for name in files_list:
         i+=1
     x = x[i+1:]
     x = [i[:-1] for i in x]
-    f = open(path_to_vulnerabilities+prefix+name[:-4]+".json",'r')
+    f = open(path_to_vulnerabilities+prefix+ci_map[name[:-4]]+".json",'r')
     vulns = json.load(f)
     f.close()
     cve_set = set()

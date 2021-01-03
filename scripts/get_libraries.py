@@ -2,7 +2,7 @@
 # does not try and catch any errors of failures
 import os
 import re
-path = "./pmap"
+path = "./pmap/"
 files_list = []
 for i,j,k in os.walk(path):
     files_list.extend(k)
@@ -14,7 +14,7 @@ for name in files_list:
         for i in x:
             if ('[' not in i) and ('/' in i):
                 i = i.split(' ')[-1][:-1]
-                cmd = "docker exec -it "+name[:-4]+" dpkg -S "+i+" >> libraries_used/"+name
+                cmd = "docker exec -it "+name[:-4]+" dpkg -S "+i+" >> libraries_needed/"+name
                 os.system(cmd)
     print(name[:-4],"done")
     print("---------------------")

@@ -22,6 +22,7 @@ for i in image_names:
     print("Pull Complete")
     print("Scanning For Vulnerabilities")
     os.system(cmd2)
+    os.system(cmd3)
     print("Scan Complete")
     print("--------------------------------------------------------------------------------")
 print("DONE")

@@ -49,31 +49,31 @@ for name in files_list:
                     suggested_upgrades[i["PkgName"]] = set()
                     suggested_upgrades[i["PkgName"]].add(i["FixedVersion"])
             if i["VulnerabilityID"] not in cve_set:
-                print(i["VulnerabilityID"],file=f)
-                cve_set.add(i["VulnerabilityID"])
-                print("Package Name : ",i["PkgName"],file=f)
-                print("Severity : ",i["Severity"],file=f)
-                if "Title" in i:
-                    print("Title : ",i["Title"],file=f)
-                if "Descreption" in i:
-                    print("Descreption : ",i["Description"],file=f)
-                print("CVSS : ",i["CVSS"],file=f)
-                print("\n................\n",file=f)
                 severity[i["Severity"]]+=1
+            print(i["VulnerabilityID"],file=f)
+            cve_set.add(i["VulnerabilityID"])
+            print("Package Name : ",i["PkgName"],file=f)
+            print("Severity : ",i["Severity"],file=f)
+            if "Title" in i:
+                print("Title : ",i["Title"],file=f)
+            if "Descreption" in i:
+                print("Descreption : ",i["Description"],file=f)
+            print("CVSS : ",i["CVSS"],file=f)
+            print("\n................\n",file=f)
     final_res[name[:-4]]=(severity,package_set)
     upgrades[name[:-4]] = suggested_upgrades
     print("------------------------",file=f)
-    print(package_set,'\n',suggested_upgrades,"\n",severity,file=f)
+    print(cve_set,'\n',package_set,'\n',suggested_upgrades,"\n",severity,file=f)
     f.close()
 # print("\n\n\n\n\n")
 f = open("res.txt",'w')
 print("Vulnerability Counts and Vulnerable Packages : \n")
 print("Vulnerability Counts and Vulnerable Packages : \n",file=f)
-print(" "*30,"|CRITICAL|","|HIGH|","|MEDIUM|","|LOW|","|TOTAL|","\tPACKAGES",sep="")
-print(" "*30,"|CRITICAL|","|HIGH|","|MEDIUM|","|LOW|","|TOTAL|","\tPACKAGES",sep="",file=f)
+print(" "*60,"|CRITICAL|","|HIGH|","|MEDIUM|","|LOW|","|TOTAL|","\tPACKAGES",sep="")
+print(" "*60,"|CRITICAL|","|HIGH|","|MEDIUM|","|LOW|","|TOTAL|","\tPACKAGES",sep="",file=f)
 for i,j in final_res.items():
-    print(i.ljust(30," "),end="")
-    print(i.ljust(30," "),end="",file=f)
+    print(i.ljust(60," "),end="")
+    print(i.ljust(60," "),end="",file=f)
     tot = 0
     for a in j[0]:
         print(str(j[0][a]).center(len(a)+1," "),end=" ")

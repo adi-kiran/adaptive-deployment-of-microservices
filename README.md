@@ -1,4 +1,4 @@
-Create a new folder [WITHOUT '_' IN THE NAME] and copy the run.sh file and docker-compose.yml file into the folder.\
+Create a new folder **[WITHOUT '_' IN THE NAME]** and copy the run.sh file and docker-compose.yml file into the folder.\
 Run the run.sh script in the created folder.\
 The overall results are found in res.txt.\
 The vulnerability_list folder contains the exposed vulnerabilities of each container.\

@@ -54,7 +54,7 @@ for line in iter(p.stdout.readline, b''):
             freq[sn] += 1
     else:
         df_res = pd.DataFrame(columns=columns)
-        df_res =  df_res.append(new_dict, ignore_index=True)
+        df_res =  df_res.append(freq, ignore_index=True)
         df_res = df_res.fillna(0)
 
         res = loaded_model.predict(df_res)

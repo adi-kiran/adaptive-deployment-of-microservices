@@ -7,12 +7,13 @@ from sklearn import svm
 from sklearn import metrics
 from sklearn.model_selection import train_test_split
 import pickle
+import time
+import matplotlib.pyplot as plt 
+from sklearn.metrics import plot_confusion_matrix
 
-pathdir = os.listdir('drive/MyDrive/Dataset_ping')
-print(pathdir)
-print(len(pathdir))
 
-PATH = "drive/MyDrive/Dataset_ping"
+
+PATH = "../Dataset_ping/Attack/all_data/"
 EXT = "*.csv"
 all_csv_files = [file
                  for path, subdir, files in os.walk(PATH)
@@ -32,6 +33,7 @@ for name in all_csv_files:
     new_dict = dict()
     try:
         for index, row in df1.iterrows():
+            #print(row['syscall'], row['count'])
             new_dict[row['syscall']] = row['count']
     except:
         print(name)
@@ -41,24 +43,32 @@ for name in all_csv_files:
     new_dict['Truth'] = ground_truth
     df =  df.append(new_dict, ignore_index=True)
 
+
 df = df.fillna(0)
 df = df.sample(frac=1)
 
-X = df.loc[:, df.columns != 'Truth']
+X_with_4 = df.loc[:, df.columns != 'Truth']
+X = df.drop(columns=[4])
 y = df['Truth']
 
-X_train, X_test, Y_train, Y_test = train_test_split(X, y, test_size=0.25, random_state=42)
+X_train, X_test, Y_train, Y_test = train_test_split(X, y, test_size=0.25)
 
 clf = svm.SVC(kernel='rbf')
+
+now = time.time()
 clf.fit(X_train, Y_train)
+total = time.time() - now
 
 y_pred = clf.predict(X_test)
 
 print("Accuracy:",metrics.accuracy_score(Y_test, y_pred))
 print("Precision:",metrics.precision_score(Y_test, y_pred))
 print("Recall:",metrics.recall_score(Y_test, y_pred))
+print("Time to Train:",total * 1000)
 
-# save the model to disk
-filename = 'finalized_model.sav'
+filename = 'finalized_model_pers.sav'
+pickle.dump(clf, open(filename, 'wb'))
 
 
+plot_confusion_matrix(clf, X_test, Y_test) 
+plt.savefig("mygraph.png")

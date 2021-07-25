@@ -2,7 +2,6 @@
 1,write
 2,open
 3,close
-4,stat
 5,fstat
 6,lstat
 7,poll

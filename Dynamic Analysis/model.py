@@ -11,17 +11,18 @@ from collections import defaultdict
 import subprocess
 import pickle
 
-filename = 'finalized_model.sav'
+filename = 'finalized_model_pers.sav'
  
-columns = [ 0,  1,  2,  3,  4,  5,  7,  8,
-   9, 10, 11, 12, 13, 14, 16, 21,
-  22, 32, 39, 41, 42, 43, 44, 45,
-  47, 51, 54, 55, 56, 59, 61, 79,
-  89,102,104,105,107,108,110,125,
- 126,157,158,186,202,217,257,269,
- 273, 38, 63, 72, 83, 87, 91,
-  95, 99,111,137,218,221,230,231,
- 268, 28, 48, 60, 24, 23]
+# columns = [ 0,  1,  2,  3,  4,  5,  7,  8,
+#    9, 10, 11, 12, 13, 14, 16, 21,
+#   22, 32, 39, 41, 42, 43, 44, 45,
+#   47, 51, 54, 55, 56, 59, 61, 79,
+#   89,102,104,105,107,108,110,125,
+#  126,157,158,186,202,217,257,269,
+#  273, 38, 63, 72, 83, 87, 91,
+#   95, 99,111,137,218,221,230,231,
+#  268, 28, 48, 60, 24, 23]
+
 # load the model from disk
 loaded_model = pickle.load(open(filename, 'rb'))
 
@@ -33,16 +34,22 @@ with open('syscall.csv') as f:
         s = s.strip()
         syscalls[s] = n
 
-
-your_command = ['docker', 'exec', 'sysdig', 'sysdig', '-p', '"%evt.time %evt.type"', 'container.name=vulnerable-microservice-web-app_ping_1']
+columns = [j for i,j in syscalls.items()]
+# your_command = ['docker', 'exec', 'sysdig', 'sysdig', '-p', '%evt.time %evt.type', 'container.id=fddf78cab5fa']
 #your_command = ['ping', '8.8.8.8']
-
-p = subprocess.Popen(your_command, stdout=subprocess.PIPE)
+current_time = None
+# p = subprocess.Popen(your_command, stdout=subprocess.PIPE)
+f = open("test.txt","r")
+l = f.readlines()
+f.close()
 freq = defaultdict(int)
-for line in iter(p.stdout.readline, b''):
+for line in l:
     # print('>>> {}'.format(line.decode('utf-8').rstrip()))
-    t,s = line.decode('utf-8').rstrip().split(' ')
+    # print(line.decode('utf-8').rstrip().split(' '))
+    # t,s = line.decode('utf-8').strip('"|\n').split(' ')
+    t,s = line.strip('"|\n').split(' ')
     s = s.strip()
+    # print(t,s)
     if s not in syscalls:
         continue
     t = t[:-3]
@@ -51,15 +58,17 @@ for line in iter(p.stdout.readline, b''):
     if current_time is None:
         current_time = dt
     if dt - current_time < timedelta(milliseconds=100):
-            freq[sn] += 1
+        freq[sn] += 1
     else:
         df_res = pd.DataFrame(columns=columns)
         df_res =  df_res.append(freq, ignore_index=True)
         df_res = df_res.fillna(0)
-
         res = loaded_model.predict(df_res)
-        if res[0] == 0:
+        # print(res)
+        if res[0] == 1:
             print("ATTACK detected")
-        else:
-            print("No attack")
+        # else:
+        #     print("No attack")
+        current_time = dt
         freq.clear()
+print("done")
